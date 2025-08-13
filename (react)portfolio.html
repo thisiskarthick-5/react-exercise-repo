@@ -1,0 +1,216 @@
+<!-- need to run in the app.js -->
+
+
+
+import React, { useState, useEffect, useRef } from "react";
+import { FaLinkedin, FaGithub, FaUser } from "react-icons/fa";
+import { MdEmail } from "react-icons/md";
+import karthick from "./assets/karthick.jpg";
+
+export default function App() {
+  const [hoveredNav, setHoveredNav] = useState(null);
+  const [hoveredIcon, setHoveredIcon] = useState(null);
+  const [visibleHero, setVisibleHero] = useState(false);
+  const [visibleAbout, setVisibleAbout] = useState(false);
+
+  const heroRef = useRef(null);
+  const aboutRef = useRef(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.target === heroRef.current && entry.isIntersecting) {
+            setVisibleHero(true);
+          }
+          if (entry.target === aboutRef.current && entry.isIntersecting) {
+            setVisibleAbout(true);
+          }
+        });
+      },
+      { threshold: 0.2 }
+    );
+
+    if (heroRef.current) observer.observe(heroRef.current);
+    if (aboutRef.current) observer.observe(aboutRef.current);
+
+    return () => observer.disconnect();
+  }, []);
+
+  const styles = {
+    container: {
+      backgroundColor: "#0a192f",
+      color: "white",
+      minHeight: "100vh",
+      display: "flex",
+      flexDirection: "column",
+    },
+    navbar: {
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      padding: "20px 40px",
+    },
+    logo: {
+      fontSize: "1.5rem",
+      fontStyle: "italic",
+      fontWeight: "bold",
+    },
+    navLinks: {
+      display: "flex",
+      gap: "20px",
+    },
+    navLink: (isHovered) => ({
+      textDecoration: "none",
+      color: isHovered ? "cyan" : "white",
+      transition: "color 0.3s",
+    }),
+    heroContent: (isVisible) => ({
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      flex: 1,
+      padding: "20px 40px",
+      opacity: isVisible ? 1 : 0,
+      transform: isVisible ? "translateY(0px)" : "translateY(50px)",
+      transition: "opacity 0.8s ease-out, transform 0.8s ease-out",
+    }),
+    socialIcons: {
+      display: "flex",
+      flexDirection: "column",
+      gap: "15px",
+      marginRight: "30px",
+    },
+    socialIcon: (isHovered) => ({
+      backgroundColor: isHovered ? "cyan" : "rgba(255, 255, 255, 0.1)",
+      padding: "10px",
+      borderRadius: "8px",
+      color: isHovered ? "black" : "white",
+      fontSize: "20px",
+      transform: isHovered ? "scale(1.1)" : "scale(1)",
+      transition: "transform 0.3s, background-color 0.3s, color 0.3s",
+      cursor: "pointer",
+    }),
+    heroText: { maxWidth: "500px" },
+    heroTitle: { fontSize: "2.5rem", fontWeight: "bold" },
+    heroDesc: { marginTop: "15px", color: "#a0aec0" },
+    aboutButton: {
+      display: "inline-block",
+      marginTop: "20px",
+      backgroundColor: "cyan",
+      color: "black",
+      padding: "12px 20px",
+      borderRadius: "8px",
+      textDecoration: "none",
+      fontWeight: "bold",
+      transition: "background-color 0.3s, transform 0.3s",
+    },
+    heroAvatar: { marginLeft: "50px" },
+    avatarImg: { width: "250px", borderRadius: "10px" },
+
+    aboutSection: (isVisible) => ({
+      minHeight: "100vh",
+      backgroundColor: "#0a192f",
+      padding: "60px 40px",
+      opacity: isVisible ? 1 : 0,
+      transform: isVisible ? "translateY(0px)" : "translateY(50px)",
+      transition: "opacity 0.8s ease-out, transform 0.8s ease-out",
+    }),
+    aboutTitle: {
+      fontSize: "2.5rem",
+      fontWeight: "bold",
+      marginBottom: "20px",
+      color: "cyan",
+    },
+    aboutText: {
+      maxWidth: "800px",
+      lineHeight: "1.6",
+      color: "#ccd6f6",
+      fontSize: "1.1rem",
+    },
+  };
+
+  return (
+    <>
+      <div style={styles.container}>
+        {/* Navbar */}
+        <header style={styles.navbar}>
+          <div style={styles.logo}>karthick</div>
+          <nav style={styles.navLinks}>
+            {["Home", "About", "Skills", "Work", "Contact"].map((link, i) => (
+              <a
+                key={i}
+                href={`#${link.toLowerCase()}`}
+                style={styles.navLink(hoveredNav === i)}
+                onMouseEnter={() => setHoveredNav(i)}
+                onMouseLeave={() => setHoveredNav(null)}
+              >
+                {link}
+              </a>
+            ))}
+          </nav>
+        </header>
+
+        {/* Hero Section */}
+        <main style={styles.heroContent(visibleHero)} ref={heroRef}>
+          {/* Social icons */}
+          <div style={styles.socialIcons}>
+            {[<FaLinkedin />, <FaGithub />, <MdEmail />, <FaUser />].map(
+              (Icon, i) => (
+                <a
+                  key={i}
+                  href="#"
+                  style={styles.socialIcon(hoveredIcon === i)}
+                  onMouseEnter={() => setHoveredIcon(i)}
+                  onMouseLeave={() => setHoveredIcon(null)}
+                >
+                  {Icon}
+                </a>
+              )
+            )}
+          </div>
+
+          {/* Text content */}
+          <div style={styles.heroText}>
+            <h1 style={styles.heroTitle}>
+              I'm a Full Stack <br /> Web Developer
+            </h1>
+            <p style={styles.heroDesc}>
+              I have 4 years of experience in graphics design and web development.
+              Currently, I love to work on web applications using technologies like
+              React, Next.js, and MongoDB.
+            </p>
+            <a href="#about" style={styles.aboutButton}>
+              About Me →
+            </a>
+          </div>
+
+          {/* Avatar image */}
+          <div style={styles.heroAvatar}>
+            <img
+              src={karthick}
+              alt="Developer Avatar"
+              style={styles.avatarImg}
+            />
+          </div>
+        </main>
+      </div>
+
+      {/* About Section */}
+      <section id="about" style={styles.aboutSection(visibleAbout)} ref={aboutRef}>
+        <h2 style={styles.aboutTitle}>About Me</h2>
+        <p style={styles.aboutText}>
+          Hello! I'm Karthick, a passionate full-stack web developer with a love for
+          crafting modern, responsive, and user-friendly applications. My journey began
+          in design, giving me a strong eye for aesthetics, which I now pair with deep
+          technical expertise to build functional and beautiful web experiences.
+        </p>
+        <p style={{ ...styles.aboutText, marginTop: "20px" }}>
+          I specialize in React, Node.js, and MongoDB, and I enjoy bringing ideas to
+          life with clean, efficient code. Whether it's a personal project or a
+          collaborative effort, I always strive to learn and push boundaries.
+        </p>
+      </section>
+    </>
+  );
+}
